@@ -1,0 +1,35 @@
+###Getting Data from Whole Foods website
+import lxml.html as lh
+import pandas as pd
+from bs4 import BeautifulSoup
+from selenium import webdriver
+import time
+import os
+
+driver = webdriver.Chrome(executable_path=os.path.abspath("chromedriver 3"))
+
+for number in range(30, 31):
+    url="https://products.wholefoodsmarket.com/search?sort=relevance&store=106" + str(number) + "&category=produce"
+    driver.get(url)
+    time.sleep(3)
+    #driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    #time.sleep(1)
+
+    prices = []
+    html = driver.page_source
+    soup = BeautifulSoup(html, features="lxml")
+    rows = soup.find_all(class_ = "Row__15gM6 ProductCard-PriceRow--g7T92")
+    for row in rows:
+        prices.append(row.find(class_ = "ProductCard-Price--1uInW").text)
+
+    location = driver.find_element_by_class_name("MenuStoreName__2XKZb").text
+    produce = driver.find_elements_by_class_name("ProductCard-Name--1o2Gg")
+    #prices = driver.get_attributes("ProductCard-Price--1uInW")
+
+    produce = [name.text for name in produce]
+    #prices = [price.text for price in prices]
+    #produceUnit = [unit[(unit.text.index(",")+2):] for unit in produce]
+
+    data = {'location': location, 'produce': produce, 'prices' : prices}
+    df = pd.DataFrame(data = data)
+    df.to_csv("Store_Data/WholeFoodsData" + location + ".csv")

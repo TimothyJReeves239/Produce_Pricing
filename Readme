@@ -1,0 +1,8 @@
+###Plan
+    Short term:
+        1) Source produce data from Whole Foods website
+            Pull out individual foods, prices & store location
+        2) Compare food prices
+        3) Note similarities & differences
+        4) Find cheapest options considering time, gas prices
+        
